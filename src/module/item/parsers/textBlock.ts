@@ -225,6 +225,12 @@ export function parseWeapon({ name, description, ability, section }: ItemParserI
   const actionType = parseActionType(description);
   if (actionType !== 'rwak' && actionType !== 'mwak') throw new Error(`${name} is not a weapon`);
 
+  let newDesc = description;
+  newDesc = newDesc.replace(/(\(\d+d\d+\s?[+-]\s?\d+\))/gm, '[[/r $1]]');
+  newDesc = newDesc.replace(/(\(\d+d\d+\))/gm, '[[/r $1]]');
+  newDesc = newDesc.replace(/([+-](\d+)) (?:to hit)/gm, '[[/r 1d20 $1]]');
+  description = newDesc;
+
   return {
     name,
     type: itemType,
@@ -391,6 +397,7 @@ export function parseFeat({ name, description, section }: ItemParserInput): Feat
 export function parsedToWeapon(name: string, inputDescription: string, inputAbility?: string): FifthItem {
   const parsedWeapon = parseWeapon({ name, description: inputDescription, ability: inputAbility as ShortAbility });
   const { type, description, activation, damage, actionType, range, ability, attackBonus } = parsedWeapon;
+
   return {
     name,
     type,
